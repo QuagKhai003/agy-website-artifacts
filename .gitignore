@@ -1,0 +1,10 @@
+# Runtime state & private security credentials (never commit)
+server/.security.json
+server/.runtime-state.json
+server/.media-cache/
+server/bin/
+
+# OS & editor clutter
+.DS_Store
+Thumbs.db
+*.log

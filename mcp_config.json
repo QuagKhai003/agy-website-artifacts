@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "agy-website-artifacts": {
+      "command": "node",
+      "args": [
+        "${PLUGIN_ROOT}/server/mcp-server.mjs"
+      ],
+      "env": {
+        "AGY_IFRAME_PORT": "4580",
+        "AGY_DATA_DIR": "${PLUGIN_DATA}"
+      }
+    }
+  }
+}

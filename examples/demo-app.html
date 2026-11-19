@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Live Sync Canvas</title>
+  <style>
+    :root {
+      --canvas: #0b0b0d;
+      --surface: rgba(255, 255, 255, 0.045);
+      --surface-hover: rgba(255, 255, 255, 0.08);
+      --surface-well: rgba(0, 0, 0, 0.28);
+      --border: rgba(255, 255, 255, 0.095);
+      --hairline: rgba(255, 255, 255, 0.075);
+      --ink-1: #f5f5f7;
+      --ink-2: #a1a1a6;
+      --ink-3: #6e6e73;
+      --action-bg: #f5f5f7;
+      --action-ink: #0b0b0d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--canvas);
+      color: var(--ink-1);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .sheet {
+      width: 100%;
+      max-width: 392px;
+      background: var(--surface);
+      backdrop-filter: blur(24px) saturate(140%);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .section {
+      padding: 20px;
+    }
+    .section + .section {
+      border-top: 1px solid var(--hairline);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--ink-1);
+    }
+    .link-btn {
+      background: none;
+      border: 0;
+      padding: 4px 0;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .link-btn:hover { color: var(--ink-1); }
+    .counter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .val {
+      font-size: 40px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-1);
+      line-height: 1;
+    }
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface-well);
+    }
+    .stepper button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--ink-1);
+      font-family: inherit;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.15s ease;
+    }
+    .stepper button + button {
+      border-left: 1px solid var(--hairline);
+    }
+    .stepper button:hover { background: var(--surface-hover); }
+    .stepper button:active { background: rgba(255, 255, 255, 0.12); }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--ink-2);
+      margin: 0 0 8px;
+    }
+    input {
+      display: block;
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-well);
+      color: var(--ink-1);
+      font-size: 15px;
+      line-height: 1.35;
+      font-family: inherit;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.15s ease;
+    }
+    input::placeholder {
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.35;
+      color: var(--ink-3);
+      opacity: 1;
+    }
+    input:focus { border-color: rgba(255, 255, 255, 0.34); }
+    .echo {
+      margin: 12px 0 0;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--ink-3);
+    }
+    .echo strong {
+      color: var(--ink-2);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <div class="section header">
+      <h1>Live Sync Canvas</h1>
+      <button type="button" class="link-btn" onclick="resetCount()">Reset</button>
+    </div>
+    <div class="section counter-row">
+      <span class="val" id="count">0</span>
+      <div class="stepper" role="group" aria-label="Counter">
+        <button type="button" aria-label="Decrease" onclick="update(-1)">−</button>
+        <button type="button" aria-label="Increase" onclick="update(1)">+</button>
+      </div>
+    </div>
+    <div class="section">
+      <label for="note">Note</label>
+      <input type="text" id="note" placeholder="Type anything to sync…" oninput="renderNote(this.value)" />
+      <p class="echo">Current: <strong id="echo">Empty</strong></p>
+    </div>
+  </main>
+  <script>
+    let c = 0;
+    function renderCount(v) { c = Number(v || 0); document.getElementById("count").textContent = c; }
+    function renderNote(v) { document.getElementById("echo").textContent = v ? v : "Empty"; }
+    function update(d) { renderCount(c + d); if (window.agySync) window.agySync.setState({ count: c }); }
+    function resetCount() { renderCount(0); if (window.agySync) window.agySync.setState({ count: 0 }); }
+    window.addEventListener("load", function () {
+      if (window.agySync) {
+        window.agySync.subscribe(function (custom, full) {
+          if (typeof custom.count === "number") renderCount(custom.count);
+          if (full && full.fields && "id:note" in full.fields) renderNote(full.fields["id:note"]);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Antigravity Website & Artifacts Bridge",
+  "version": "1.0.0",
+  "description": "Renders interactive inline iframe previews and New-Tab links directly inside Google Antigravity in the web browser without modifying core files.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "agy-website-artifacts",
+  "displayName": "Website & Artifacts Publisher",
+  "version": "1.0.0",
+  "logo": "assets/logo.svg",
+  "author": {
+    "name": "Quang Khai",
+    "url": "https://github.com/QuagKhai003"
+  },
+  "homepage": "https://github.com/QuagKhai003/agy-website-artifacts",
+  "repository": "https://github.com/QuagKhai003/agy-website-artifacts",
+  "description": "Publish live local websites, static builds, task-adaptive review workspaces, and interactive HTML/React artifacts with Apple HIG monochrome glassmorphism, real-time PC <-> Mobile sync, 1-Link Smart Routing, and a PIN-protected Private Security Gateway.",
+  "suggestedPrompts": [
+    "Publish my local web app on localhost:3000 so I can test it on my phone",
+    "Create a photo-triage workspace for the images in ./exports so I can cull them remotely",
+    "Build an interactive HTML artifact with real-time PC and mobile sync"
+  ]
+}
